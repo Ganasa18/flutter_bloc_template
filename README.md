@@ -44,7 +44,7 @@
 dart pub global activate copy_template
 
 # Create your project
-copy_template my_app https://github.com/yusriltakeuchi/flutter_template.git /path/to/folder
+copy_template my_app https://github.com/Ganasa18/flutter_bloc_template.git /path/to/folder
 ```
 
 ### 2️⃣ Setup Package Name
