@@ -6,8 +6,10 @@ import 'package:my_template/bloc/user/user_bloc.dart';
 import 'package:my_template/config/app_config.dart';
 import 'package:my_template/core/components/idle/idle_item.dart';
 import 'package:my_template/core/components/loading/loading_listview.dart';
+import 'package:my_template/core/constant/utils.dart';
 import 'package:my_template/extension/extensions.dart';
 import 'package:my_template/theme/theme.dart';
+import 'package:my_template/utils/snackbar/fancy_snackbar.dart';
 
 @RoutePage()
 class HomeScreen extends StatelessWidget {
@@ -86,6 +88,16 @@ class HomeBody extends StatelessWidget {
                   ),
                   title: Text("${user.firstName} ${user.lastName}"),
                   subtitle: Text(user.email ?? ""),
+                  onTap: () {
+                    final name =
+                        "${user.firstName ?? ''} ${user.lastName ?? ''}".trim();
+                    showFancySnackbar(
+                      title: 'Selected user',
+                      message: '${name.isEmpty ? 'Unknown' : name} - '
+                          '${user.email ?? 'No email'}',
+                      contentType: ContentType.success,
+                    );
+                  },
                 );
               },
             );
