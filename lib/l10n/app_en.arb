@@ -1,0 +1,15 @@
+{
+  "@@locale": "en",
+  "homeScreenTitle": "Home Screen",
+  "selectedUserTitle": "Selected user",
+  "unknownName": "Unknown",
+  "noEmail": "No email",
+  "selectedUserMessage": "{name} - {email}",
+  "@selectedUserMessage": {
+    "description": "Message shown when a user is selected from the list.",
+    "placeholders": {
+      "name": {},
+      "email": {}
+    }
+  }
+}

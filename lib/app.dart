@@ -1,13 +1,16 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:my_template/bloc/locale/locale_bloc.dart';
 import 'package:my_template/bloc/theme/theme_bloc.dart';
 import 'package:my_template/config/app_config.dart';
 import 'package:my_template/injection/injector.dart';
 import 'package:my_template/utils/flavor/flavor_utils.dart';
 import 'package:my_template/routing/route.dart';
 import 'package:my_template/routing/route_observer.dart';
+import 'package:my_template/l10n/app_localizations.dart';
 
 final appRouter = inject<AppRouter>();
 
@@ -34,59 +37,82 @@ class _AppState extends State<App> {
           minTextAdapt: true,
           splitScreenMode: true,
           builder: (context, _) {
-            return BlocProvider<ThemeBloc>(
-              create: (context) => ThemeBloc()..getTheme(),
+            return MultiBlocProvider(
+              providers: [
+                BlocProvider<ThemeBloc>(
+                  create: (context) => ThemeBloc()..getTheme(),
+                ),
+                BlocProvider<LocaleBloc>(
+                  create: (context) => LocaleBloc()..getLocale(),
+                ),
+              ],
               child: BlocBuilder<ThemeBloc, ThemeState>(
                 builder: (context, state) {
                   return state.maybeWhen(
                     loaded: (mode) {
-                      return MaterialApp.router(
-                        routerConfig: appRouter.config(
-                          navigatorObservers: () => [RouterObserver()],
-                          deepLinkBuilder: (deepLink) {
-                            if (deepLink.path.startsWith("/invoice")) {
-                              /// Do something
-                              return deepLink;
-                            } else {
-                              return DeepLink.defaultPath;
-                            }
-                          },
-                        ),
-                        theme: AppTheme.lightTheme,
-                        darkTheme: AppTheme.darkTheme,
-                        themeMode: mode,
-                        title: flavor.current.name,
-                        debugShowCheckedModeBanner: false,
-                        localeResolutionCallback: (locale, supportedLocales) {
-                          // Check if the current device locale is supported
-                          for (var supportedLocale in supportedLocales) {
-                            if (supportedLocale.languageCode ==
-                                    locale?.languageCode &&
-                                supportedLocale.countryCode ==
-                                    locale?.countryCode) {
-                              return supportedLocale;
-                            }
-                          }
-                          // If the locale of the device is not supported, use the first one
-                          return supportedLocales.first;
-                        },
-                        builder: (ctx, child) {
-                          return MediaQuery(
-                            data: MediaQuery.of(ctx).copyWith(),
-                            child: ScrollConfiguration(
-                              behavior: MyBehavior(),
-                              child: flavor.current.type == FlavorType.prod
-                                  ? child!
-                                  : Banner(
-                                      location: BannerLocation.topEnd,
-                                      message: flavor.current.type
-                                          .toString()
-                                          .split('.')
-                                          .last
-                                          .toUpperCase(),
-                                      child: child!,
-                                    ),
+                      return BlocBuilder<LocaleBloc, LocaleState>(
+                        builder: (context, localeState) {
+                          return localeState.maybeWhen(
+                            loaded: (locale) {
+                              return MaterialApp.router(
+                            routerConfig: appRouter.config(
+                              navigatorObservers: () => [RouterObserver()],
+                              deepLinkBuilder: (deepLink) {
+                                if (deepLink.path.startsWith("/invoice")) {
+                                  /// Do something
+                                  return deepLink;
+                                } else {
+                                  return DeepLink.defaultPath;
+                                }
+                              },
                             ),
+                            theme: AppTheme.lightTheme,
+                            darkTheme: AppTheme.darkTheme,
+                            themeMode: mode,
+                            title: flavor.current.name,
+                            debugShowCheckedModeBanner: false,
+                            locale: locale,
+                            localizationsDelegates: const [
+                              AppLocalizations.delegate,
+                              GlobalMaterialLocalizations.delegate,
+                              GlobalWidgetsLocalizations.delegate,
+                              GlobalCupertinoLocalizations.delegate,
+                            ],
+                            supportedLocales: AppLocalizations.supportedLocales,
+                            localeResolutionCallback:
+                                (deviceLocale, supportedLocales) {
+                              for (var supportedLocale in supportedLocales) {
+                                if (supportedLocale.languageCode ==
+                                        deviceLocale?.languageCode &&
+                                    supportedLocale.countryCode ==
+                                        deviceLocale?.countryCode) {
+                                  return supportedLocale;
+                                }
+                              }
+                              return supportedLocales.first;
+                            },
+                            builder: (ctx, child) {
+                              return MediaQuery(
+                                data: MediaQuery.of(ctx).copyWith(),
+                                child: ScrollConfiguration(
+                                  behavior: MyBehavior(),
+                                  child: flavor.current.type == FlavorType.prod
+                                      ? child!
+                                      : Banner(
+                                          location: BannerLocation.topEnd,
+                                          message: flavor.current.type
+                                              .toString()
+                                              .split('.')
+                                              .last
+                                              .toUpperCase(),
+                                          child: child!,
+                                        ),
+                                ),
+                                  );
+                            },
+                          );
+                            },
+                            orElse: () => const SizedBox(),
                           );
                         },
                       );

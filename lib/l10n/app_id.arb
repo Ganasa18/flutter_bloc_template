@@ -1,0 +1,15 @@
+{
+  "@@locale": "id",
+  "homeScreenTitle": "Beranda",
+  "selectedUserTitle": "User terpilih",
+  "unknownName": "Tidak diketahui",
+  "noEmail": "Tidak ada email",
+  "selectedUserMessage": "{name} - {email}",
+  "@selectedUserMessage": {
+    "description": "Pesan saat pengguna dipilih dari daftar.",
+    "placeholders": {
+      "name": {},
+      "email": {}
+    }
+  }
+}
