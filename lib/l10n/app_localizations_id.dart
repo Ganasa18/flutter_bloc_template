@@ -12,7 +12,7 @@ class AppLocalizationsId extends AppLocalizations {
   String get homeScreenTitle => 'Beranda';
 
   @override
-  String get selectedUserTitle => 'Pengguna terpilih';
+  String get selectedUserTitle => 'User terpilih';
 
   @override
   String get unknownName => 'Tidak diketahui';

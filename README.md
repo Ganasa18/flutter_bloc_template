@@ -31,6 +31,7 @@
 | 🌍 **Multi-Flavor**         | Dev, Staging, Production environments |
 | 💉 **Dependency Injection** | Modular & testable                    |
 | 🌓 **Theme Support**        | Light, Dark, System modes             |
+| 🏳️ **Localization**         | l10n + language                       |
 | 🔧 **Error Handling**       | Centralized failure management        |
 
 ---
@@ -175,6 +176,25 @@ flutter_launcher_icons:
 ### 🌓 Theme Mode
 
 Access theme with `BlocBuilder<ThemeBloc>`. Modes: `light`, `dark`, `system`
+
+### 🏳️ Localization (l10n)
+
+Translations live in `lib/l10n/*.arb` and are generated with:
+
+```bash
+flutter gen-l10n
+```
+
+The Home AppBar includes a language toggle (EN/ID). Locale state is persisted
+via shared preferences using `AppKey.language`.
+
+To add a new language:
+
+1. Create a new ARB file, e.g. `lib/l10n/app_es.arb`
+2. Add `@@locale` and the same keys as other ARB files
+3. Run `flutter gen-l10n`
+
+Do not edit generated files like `lib/l10n/app_localizations_*.dart` directly.
 
 ### 🎯 BLoC State Management
 
